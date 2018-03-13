@@ -1,0 +1,15 @@
+MACDEF macroA
+mov eax,0
+MACDEF macroC
+int 80h
+DEFEND
+call printf
+DEFEND
+MACDEF macroB (0)
+mov ecx,#1
+mov edx,4
+DEFEND
+mov ebx,0
+MCALL macroA
+MCALL macroB (2)
+MCALL macroC
