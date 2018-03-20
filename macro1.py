@@ -1,5 +1,6 @@
+import re
 # open input file
-f = open("input.txt","r")
+f = open("input1.txt","r")
 lines = f.readlines()
 i=0
 k=0
@@ -10,6 +11,8 @@ ifFlag=0
 args=[]
 names=[]
 definitions=[]
+var=dict()
+labels=dict()
 def getline():
 	global i
 	global k,j
@@ -52,6 +55,21 @@ def processline(line):
 	# expand macro call
 	elif OPCODE=="MCALL":
 		expand(line)
+	elif OPCODE=="_SET":
+		line=line[line.find(' ')+1:]
+		variable=line[:line.find(' ')]
+		exp=line[line.find(' ')+1:]
+		exp=exp.strip()
+		for term in var.keys():
+			if term in exp:
+				l=exp.find(term)
+				exp=exp[:l]+str(var[term])+exp[l+len(term):]	
+		var[variable]=eval(exp)
+		#print(eval(exp))
+	elif OPCODE=="_LABEL":
+		pass
+	elif OPCODE=="_JUMP":
+		pass
 	elif OPCODE=="_IF":
 		if "|=" in line:
 				line=line[0:line.find("|=")]
@@ -75,6 +93,7 @@ def processline(line):
 		elseFlag=1
 	elif OPCODE=="_ENDIF":
 		ifCond=0
+		ifFlag=0
 		elseFlag=0
 	else:
 		if (elseFlag==1 and ifCond==0) or (ifFlag==0 and elseFlag==0) or (ifCond==1 and ifFlag==1):
@@ -184,4 +203,3 @@ while i<len(lines):
 	processline(line)
 #print(names)
 #print(definitions)
-#print(names, definitions)

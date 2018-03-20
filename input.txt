@@ -17,10 +17,16 @@ MCALL macroB (2)
 MCALL macroC
 MACDEF two (0)
 _IF (#1 EQ 2)
-print("two")
+print("argument is two")
 _ELSE
-print("not two")
+print("argumetn is not two")
 _ENDIF
 DEFEND
 MCALL two (2)
 MCALL two (3)
+|= TODOS
+|= label
+|= while
+|= label
+|= jump
+|= set
