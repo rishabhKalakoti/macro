@@ -60,10 +60,14 @@ def processline(line):
 		line=line[line.find(' ')+1:].strip()
 		line=line[1:-1]
 		elements=line.split(' ')
+		# check the if condition
 		if elements[1]=='EQ':
 			if elements[0].startswith('#')==True:
 				elements[0]=elements[0][1:]
 				elements[0]=args[int(elements[0])-1]
+			if elements[2].startswith('#')==True:
+				elements[2]=elements[2][1:]
+				elements[2]=args[int(elements[2])-1]	
 			if elements[0]==elements[2]:
 				ifCond=1
 	elif OPCODE=="_ELSE":
@@ -119,6 +123,7 @@ def define(line):
 		name.append(None)
 	names.append(name)
 	#print(name)
+	# levels for nested definitions
 	level=1
 	definition=[]
 	while level>0:
