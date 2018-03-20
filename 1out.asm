@@ -21,7 +21,7 @@ push rsi
 push r8
 mov rdi,rdx
 call atoi
-mov [%i],rax
+mov [i],rax
 pop r8
 pop rsi
 pop rdx
@@ -34,7 +34,7 @@ push rsi
 push r8
 mov rdi,rdx
 call atoi
-mov [%j],rax
+mov [j],rax
 pop r8
 pop rsi
 pop rdx
@@ -47,7 +47,7 @@ push rsi
 push r8
 mov rdi,rdx
 call atoi
-mov [%n],rax
+mov [n],rax
 pop r8
 pop rsi
 pop rdx

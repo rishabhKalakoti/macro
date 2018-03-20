@@ -7,7 +7,7 @@ push rsi
 push r8
 mov rdi,rdx
 call atoi
-mov [%1],rax
+mov [#1],rax
 pop r8
 pop rsi
 pop rdx

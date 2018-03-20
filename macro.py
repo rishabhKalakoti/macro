@@ -1,8 +1,12 @@
+# open input file
 f = open("input.txt","r")
 lines = f.readlines()
 i=0
 k=0
 j=0
+elseFlag=0
+ifCond=0
+ifFlag=0
 args=[]
 names=[]
 definitions=[]
@@ -11,6 +15,7 @@ def getline():
 	global k,j
 	if expanding==True:
 		j=j+1
+		# return corresponding line from deftab
 		return definitions[k][j-1]
 	else:
 		if i>=len(lines):
@@ -18,42 +23,86 @@ def getline():
 		i=i+1
 		return lines[i-1]
 def processline(line):
+	global ifFlag
+	global elseFlag
+	global ifCond
 	if line==None:
 		return
 	#print(line)
 	line.strip()
-	OPCODE=line[:line.find(' ')]
+	if ' ' in line:
+		OPCODE=line[:line.find(' ')]
+	else:
+		OPCODE=line[:-1]
+	# check for a macro definition
 	if OPCODE=="MACDEF":
 		define(line)
+	elif OPCODE=="MSDEF":
+		# add single line definitions
+		name=[]
+		line=line[line.find(' ')+1:]
+		name.append(line[:line.find(' ')])
+		name.append(0)
+		name.append(None)
+		names.append(name)
+		line=line[line.find(' ')+1:]
+		definition=[]
+		definition.append(line.strip()+'\n')
+		definitions.append(definition)
+	# expand macro call
 	elif OPCODE=="MCALL":
 		expand(line)
-	else:
+	elif OPCODE=="_IF":
 		if "|=" in line:
-			line=line[0:line.find("|=")]
-			line=line+'\n'
-		i=0
-		#for i in range(len(line)):
-		while i<len(line):
-			k=0
-			if line[i]=='#':
+				line=line[0:line.find("|=")]
+				line=line+'\n'
+		ifFlag=1
+		line=line[line.find(' ')+1:].strip()
+		line=line[1:-1]
+		elements=line.split(' ')
+		if elements[1]=='EQ':
+			if elements[0].startswith('#')==True:
+				elements[0]=elements[0][1:]
+				elements[0]=args[int(elements[0])-1]
+			if elements[0]==elements[2]:
+				ifCond=1
+	elif OPCODE=="_ELSE":
+		ifFlag=0
+		elseFlag=1
+	elif OPCODE=="_ENDIF":
+		ifCond=0
+		elseFlag=0
+	else:
+		if (elseFlag==1 and ifCond==0) or (ifFlag==0 and elseFlag==0) or (ifCond==1 and ifFlag==1):
+			# comment removal
+			if "|=" in line:
+				line=line[0:line.find("|=")]
+				line=line+'\n'
+			i=0
+			#for i in range(len(line)):
+			while i<len(line):
+				k=0
+				# parameter substitution
+				if line[i]=='#':
+					i=i+1
+					j=0
+					k=i
+					while(line[k]>='0' and line[k]<='9'):
+						j=j*10+(int(line[k])-int('0'))
+						k=k+1
+						#print(j)
+					print(args[j-1],end='')
+					i=k
+					print(line[i],end='')
+				else:
+					print(line[i],end='')
 				i=i+1
-				j=0
-				k=i
-				while(line[k]>='0' and line[k]<='9'):
-					j=j*10+(int(line[k])-int('0'))
-					k=k+1
-					#print(j)
-				print(args[j-1],end='')
-				i=k
-				print(line[i],end='')
-			else:
-				print(line[i],end='')
-			i=i+1
-		#print(line,end='')
+			#print(line,end='')
 def define(line):
 	line=line[line.find(' ')+1:]
 	line=line.strip()
 	name=[]
+	# add macro name to nametab
 	if ' ' in line:
 		name.append(line[0:line.find(' ')])
 		line=line[line.find(' ')+1:]
@@ -105,6 +154,7 @@ def expand(line):
 		#print(params)
 		for i in range(len(args)):
 			args.pop()
+		# load arguments into argtab
 		for i in range(len(params)):
 			params[i]=params[i].strip()
 			if(params[i]==''):
@@ -128,3 +178,4 @@ while i<len(lines):
 	processline(line)
 #print(names)
 #print(definitions)
+#print(names, definitions)

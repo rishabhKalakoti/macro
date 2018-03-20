@@ -9,7 +9,18 @@ MACDEF macroB (0)
 mov ecx,#1
 mov edx,4
 DEFEND
-mov ebx,0
+MSDEF N ;NUMBER
+mov ebx,5
+MCALL N
 MCALL macroA
 MCALL macroB (2)
 MCALL macroC
+MACDEF two (0)
+_IF (#1 EQ 2)
+print("two")
+_ELSE
+print("not two")
+_ENDIF
+DEFEND
+MCALL two (2)
+MCALL two (3)
